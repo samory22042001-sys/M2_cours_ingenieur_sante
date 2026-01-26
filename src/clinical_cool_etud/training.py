@@ -122,6 +122,6 @@ def main():
     
     print(f"\nC-Index dépendant du temps final : {c_index_time_dep:.4f}")
 
-    #Le modèle affiche un C-Index dépendant du temps de 0.8383, ce qui indique une forte capacité discriminatoire. 
+    #Le modèle affiche un C-Index dépendant du temps autour des 0.8 , ce qui indique une forte capacité discriminatoire. 
     #Le modèle parvient à ordonner correctement la survie des patients dans 83,8% des paires comparables.
     #Cela confirme que l'intégration des trajectoires temporelles via le LSTM apporte une précision prédictive élevée dans ce contexte clinique.
