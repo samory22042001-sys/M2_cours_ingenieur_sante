@@ -73,10 +73,10 @@ def main():
     opt_ode = torch.optim.Adam(model_ode.parameters(), lr=0.001)
 
     # 4. Phase d'entraînement
-    print(f"--- Entraînement du LSTM ({epochs} époques) ---")
+    print(f"--- Entraînement du LSTM ({epochs} epochs) ---")
     history_lstm = train_and_get_history(model_lstm, criterion, opt_lstm, epochs, X_train, Y_train)
     
-    print(f"\n--- Entraînement de la Neural ODE ({epochs} époques) ---")
+    print(f"\n--- Entraînement de la Neural ODE ({epochs} epochs) ---")
     history_ode = train_and_get_history(model_ode, criterion, opt_ode, epochs, X_train, Y_train)
 
     # 5. Création du graphique comparatif
@@ -86,7 +86,7 @@ def main():
     plt.plot(history_ode, label='Loss : Neural ODE (Continu)', color='darkorange', linewidth=2)
     
     plt.title("Comparaison de la convergence : LSTM vs Neural ODE")
-    plt.xlabel("Époques")
+    plt.xlabel("Epochs")
     plt.ylabel("Loss (Negative Log-Likelihood Moyenne)")
     plt.legend()
     plt.grid(True, linestyle='--', alpha=0.6)
@@ -103,3 +103,36 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+""" 
+Méthodologie et Données :
+Pour garantir une comparaison équitable, les deux modèles ont été entraînés sur un dataset strictement identique :
+* Population : 312 patients au total, avec un suivi longitudinal allant jusqu'à 16 visites par patient.
+* Features : 15 variables cliniques (10 continues comme la bilirubine et l'albumine, et 5 binaires).
+* Répartition : Un split stratifié a été utilisé pour maintenir un taux d'événements (décès) cohérent entre l'entraînement (45,0%) et le test (44,4%).
+
+
+Configuration des Hyperparamètres :
+"Les deux modèles ont partagé le même cadre d'apprentissage :
+* Optimiseur avec un taux d'apprentissage (learning rate) de 0.001.
+* Fonction de perte : La Negative Log-Likelihood (NLL) adaptée à la survie discrète.
+* Durée : 200 épochs d'entraînement pour observer la stabilisation complète des courbes.
+* Architecture : Le LSTM utilisait 64 neurones cachés sur 2 couches, tandis que le Neural ODE utilisait un espace latent de 32 dimensions pour modéliser la dynamique continue.
+
+Interprétation du Graphique :
+    * Le LSTM (Bleu) : Malgré sa complexité (64 neurones, 2 couches), il plafonne rapidement. On observe une chute très brutale de la perte (Loss) dès les premières époques. 
+Le modèle identifie rapidement les corrélations majeures dans les données séquentielles. Cependant, il atteint un plateau très vite. 
+Cela suggère que le LSTM, peine à capturer toute la complexité des données, probablement à cause de sa nature discrète qui ignore le temps réel s'écoulant entre deux visites médicales.
+
+    * Le Neural ODE (Orange) : Avec seulement quelques dimensions latentes, il surpasse le LSTM. La descente est beaucoup plus régulière et ne présente pas de cassure brutale. 
+C'est le signe que le solveur d'équations différentielles optimise continuellement la fonction de transition du patient. Contrairement au LSTM, le Neural ODE ne stagne pas. 
+Il continue de minimiser la perte tout au long des 200 epochs, finissant à un niveau proche de 0.3. 
+
+Conclusion Technique :
+En résumé, avec les mêmes données et le même budget d'optimisation, le Neural ODE parvient à une perte finale d'environ 0.3 contre environ 2.7 pour le LSTM. 
+Cette capacité à mieux ajuster les trajectoires de santé confirme que les modèles à base d'équations différentielles sont l'outil de choix pour la médecine personnalisée et le suivi à long terme.
+
+Limites et Perspectives :
+Cependant, cette analyse se base uniquement sur la convergence de la fonction de perte. Pour une évaluation complète, il serait essentiel d'examiner les performances prédictives en utilisant des métriques comme le C-Index ou l'AUC.
+Car oui la Loss est un indicateur d'ajustement, mais ne garantit pas une meilleure capacité de généralisation sur des données inédites. (cas de surajustement)
+"""
