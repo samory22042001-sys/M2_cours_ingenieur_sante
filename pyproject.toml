@@ -14,6 +14,7 @@ dependencies = [
     "scikit-learn>=1.8.0",
     "seaborn>=0.13.2",
     "torch>=2.9.1",
+    "torchdiffeq>=0.2.5",
 ]
 
 [project.scripts]
@@ -21,6 +22,8 @@ process_data = "clinical_cool_etud.process_data:main"
 correct_data = "clinical_cool_etud.correct_data:main"
 run_model = "clinical_cool_etud.main:main"
 training = "clinical_cool_etud.training:main"
+ODE = "clinical_cool_etud.ODE:main"
+Comparaison = "clinical_cool_etud.Comparaison:main"
 
 [build-system]
 requires = ["hatchling"]
