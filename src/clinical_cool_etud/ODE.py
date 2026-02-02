@@ -140,3 +140,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+"""Le modèle affiche un C-Index dépendant du temps autour des 0.8 tout comme le LSTM, ce qui indique aussi une forte capacité discriminatoire. 
+    Le modèle parvient à ordonner correctement la survie des patients dans des paires comparables Avec un peu plus de donnée il serait possible d'ameliorer ce résultat.
+"""
